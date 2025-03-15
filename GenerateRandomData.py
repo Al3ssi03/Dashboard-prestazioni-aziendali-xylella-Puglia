@@ -26,7 +26,7 @@ def genera_dati_simulati(num_giorni=365):
     # Produzione olio: Riduzione in funzione alberi infetti
     produzione_media = 150  # litri per ettaro senza infezioni
     perdita_percentuale = (df['Alberi_Ripiantati'] / df['Alberi_Totali']) * np.random.uniform(0.2, 0.4, size=num_days)
-    df['Produzione_Olio'] = (2000 * (1 - perdita)).round(2)
+    df['Produzione_Olio'] = (2000 * (1 - perdita_percentuale)).round(2)
 
     return df
 

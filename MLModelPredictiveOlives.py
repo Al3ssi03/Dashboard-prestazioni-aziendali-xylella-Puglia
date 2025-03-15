@@ -53,7 +53,7 @@ app.layout = html.Div([
     html.H2("Mappa della diffusione della Xylella"),
     dl.Map(id="mappa_xylella", style={'width': '100%', 'height': '500px'}, center=[40.9, 16.6], zoom=8, children=[
         dl.TileLayer(),
-        dl.MarkerClusterGroup(id="layer_province")
+        dl.LayerGroup(id="layer_province")
     ]),
 
     html.H2("Predizione produzione olio"),
