@@ -3,7 +3,7 @@ import dash
 from dash import dcc, html, Input, Output, State
 import plotly.express as px
 import dash_leaflet as dl
-from MLModelPredictiveOlives import model, calcola_predizione
+from MLModelPredictiveOlives import calcola_predizione
 
 # Caricamento dati simulati
 simulated_data = pd.read_csv('dati_simulati_xylella.csv')
@@ -18,9 +18,10 @@ provincia_coords = {
     'Foggia': [41.4622, 15.5446]
 }
 
-# App Dash
+# Creazione applicazione Dash
 app = dash.Dash(__name__)
 
+# Layout dell'applicazione
 app.layout = html.Div([
     html.H1("Dashboard Monitoraggio Xylella in Puglia", style={'text-align': 'center'}),
 
@@ -46,7 +47,7 @@ app.layout = html.Div([
     ]),
 
     html.H2("🔍 Previsione produzione olio d'oliva", style={'text-align': 'center', 'color': '#2C3E50', 'margin-top': '20px'}),
-    
+
     html.Div([
         dcc.Input(id='input_temp', type='number', placeholder="🌡️ Temperatura (°C)", style={'margin': '10px', 'padding': '10px', 'width': '18%'}),
         dcc.Input(id='input_umidita', type='number', placeholder="💧 Umidità (%)", style={'margin': '10px', 'padding': '10px', 'width': '18%'}),
@@ -79,6 +80,25 @@ def update_grafici(selected_provincia):
     fig_infetti = px.bar(filtered_df, x='Data', y='Alberi_Infetti', title='Numero Alberi Infetti')
 
     return fig_temp, fig_umid, fig_infetti
+
+@app.callback(
+    Output('output_predizione', 'children'),
+    Input('calcola_predizione', 'n_clicks'),
+    State('input_temp', 'value'),
+    State('input_umidita', 'value'),
+    State('input_precipitazioni', 'value'),
+    State('input_alberi_ripiantati', 'value'),
+    State('input_alberi_infetti', 'value')
+)
+def aggiorna_predizione(n_clicks, temp, umid, precipitazioni, ripiantati, infetti):
+    if n_clicks == 0 or None in [temp, umid, precipitazioni, ripiantati, infetti]:
+        return "⚠️ Inserisci tutti i valori e premi il pulsante per la predizione."
+
+    try:
+        prediction = calcola_predizione(temp, umid, precipitazioni, ripiantati, infetti)
+        return f'📈 Produzione di olio prevista: {prediction:.2f} litri per ettaro'
+    except Exception as e:
+        return f'❗ Errore durante la predizione: {str(e)}'
 
 if __name__ == '__main__':
     app.run_server(debug=True)
