@@ -1,4 +1,3 @@
-# Questo file è Dashboard.py con un front-end ulteriormente migliorato e mappa con aree rosse
 
 import pandas as pd
 import dash
